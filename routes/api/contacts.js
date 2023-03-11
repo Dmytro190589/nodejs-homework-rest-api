@@ -1,29 +1,22 @@
 const express = require('express');
-const { getContact, addContact, getContactById, deleteContact, updateContact, updateStatusContact } = require('../../controllers/controllers');
-// const { listContacts,
-//   getContactById,
-//   addContact,
-//   removeContact,
-//   updateContact
-// } = require('../../models/contacts');
-const { ctrlWrapper } = require('../../middlewares/ctrlWrapper')
+const ctrl = require('../../controllers');
+const { ctrlWrapper } = require('../../middleware')
+
 const router = express.Router()
 
-router.get('/', ctrlWrapper(getContact))
-router.get('/:contactId', ctrlWrapper(getContactById))
-// router.get('/:contactId', async (req, res, next) => {
-//   try {
-//     const contactId = await getContactById(req.params.contactId);
-//     const [contact] = contactId.filter(item => item.id === req.params.contactId);
-//     if (!contact) {
-//       return res.status(404).json({ message: `Not with  ${req.params.contactId} id found!` })
-//     }
-//     return res.json(contact)
+router.get('/', ctrlWrapper(ctrl.getContact))
+router.get('/:contactId', ctrlWrapper(ctrl.getContactById))
+router.post('/', ctrlWrapper(ctrl.addContact))
+router.delete('/:contactId', ctrlWrapper(ctrl.deleteContact))
+router.put('/:contactId',ctrlWrapper(ctrl.updateContact))
+router.patch('/:contactId/favorite',ctrlWrapper(ctrl.updateStatusContact))
+
+module.exports = router
+
 //   } catch (error) {
 //     return res.status(500).send({ message: 'Something went wrong!' })
 //   }
 // })
-router.post('/', ctrlWrapper(addContact))
 // router.post('/', async (req, res, next) => {
 //   const { name, email, phone } = req.body;
 //   const schema = Joi.object({
@@ -50,7 +43,6 @@ router.post('/', ctrlWrapper(addContact))
 //     return res.status(500).send({ message: "Something went wrong!" })
 //   }
 // })
-router.delete('/:contactId', ctrlWrapper(deleteContact))
 // router.delete('/:contactId', async (req, res, next) => {
 //   try {
 //     const contacts = await removeContact(req.params.contactId)
@@ -62,7 +54,6 @@ router.delete('/:contactId', ctrlWrapper(deleteContact))
 //     res.status(500).send({ message: 'Something went wrong!' })
 //   }
 // })
-router.put('/:contactId',ctrlWrapper(updateContact))
 // router.put('/:contactId', async (req, res, next) => {
 //   const { name, email, phone } = req.body;
 //   const { contactId } = req.params;
@@ -90,6 +81,4 @@ router.put('/:contactId',ctrlWrapper(updateContact))
 //     res.json({ message: 'Something went wrong!' })
 //   }
 // })
-router.patch('/:contactId/favorite',ctrlWrapper(updateStatusContact))
 
-module.exports = router
