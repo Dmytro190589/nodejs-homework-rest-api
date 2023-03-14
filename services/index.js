@@ -1,3 +1,4 @@
+const { WrongParamsError, NotFoundError} = require('../helpers/error');
 const { Contact } = require('../models');
 
 const getAllContacts = async () => {
@@ -5,16 +6,30 @@ const getAllContacts = async () => {
 }
 
 const getContactById = async (id) => {
-    return Contact.findById(id)
+
+    const result = await Contact.findById(id)
+    if (!result) {
+        throw new WrongParamsError(`Not with  ${id} id found!`)
+    }
+    return result
 }
 const addContact = async (body) => {
-    return Contact.create(body)
+
+    return Contact.create(body);
 }
 const deleteContact = async (id) => {
-    return Contact.findByIdAndRemove(id)
+    const result = await Contact.findByIdAndRemove(id)
+    if (!result) {
+        throw new NotFoundError("Not found!")
+    }
+    return result;
 }
 const updateContact = async (id, body) => {
-    return Contact.findByIdAndUpdate({_id:id}, body, { new: true })
+    const contact = await Contact.findByIdAndUpdate({ _id: id }, body, { new: true })
+    if (!contact) {
+        throw new NotFoundError(`Not found contact id: ${id}`)
+    }
+    return contact;
 }
 module.exports = {
     getAllContacts,
