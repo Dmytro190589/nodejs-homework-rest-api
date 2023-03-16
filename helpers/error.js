@@ -20,8 +20,27 @@ class NotFoundError extends Error {
 
     }
 }
+class ConflictError extends Error {
+    constructor(message) {
+        super(message);
+        this.status = 409;
+        this.message = message;
+
+    }
+}
+class Unauthorized extends Error {
+    constructor(message) {
+        super(message);
+        this.status = 401;
+        this.message = message;
+
+    }
+}
+
 module.exports = {
     ValidationError,
     WrongParamsError,
-    NotFoundError
+    NotFoundError,
+    ConflictError,
+    Unauthorized
 }

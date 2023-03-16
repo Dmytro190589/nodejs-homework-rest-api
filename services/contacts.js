@@ -1,5 +1,5 @@
-const { WrongParamsError, NotFoundError} = require('../helpers/error');
-const { Contact } = require('../models');
+const { WrongParamsError, NotFoundError } = require('../helpers/error');
+const { Contact } = require('../models')
 
 const getAllContacts = async () => {
     return Contact.find()
