@@ -16,17 +16,15 @@ const registration = async (email, password) => {
 
 const login = async (email, password) => {
     const user = await User.findOne({ email })
-    if (!user) {
-        throw new Unauthorized("Email is wrong")
-    }
-    if (! await bcrypt.compare(password, user.password)) {
-        throw new Unauthorized("Password is wrong")
+    if (!user || !await bcrypt.compare(password, user.password)) {
+        throw new Unauthorized("Email or Password is wrong")
     }
     const token = jwt.sign({
         id: user.id,
     }, process.env.JWT_SECRET)
 
     return token;
+
 }
 
 module.exports = {

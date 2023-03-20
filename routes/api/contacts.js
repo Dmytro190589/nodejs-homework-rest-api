@@ -3,7 +3,11 @@ const { contacts: ctrl } = require('../../controllers');
 const { ctrlWrapper } = require('../../helpers');
 const { addPostValidation, favoriteSchema } = require('../../middleware/validationMiddleware');
 
+const { authMiddleware } = require('../../middleware/authMiddleware')
+
 const router = express.Router()
+
+router.use(authMiddleware)
 
 router.get('/', ctrlWrapper(ctrl.getContact))
 router.get('/:contactId', ctrlWrapper(ctrl.getContactById))

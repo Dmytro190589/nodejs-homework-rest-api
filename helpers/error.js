@@ -1,18 +1,25 @@
-class ValidationError extends Error {
+class PersonalError extends Error {
     constructor(message) {
         super(message);
         this.status = 400;
         this.message = message
     }
 }
-class WrongParamsError extends Error {
+class ValidationError extends PersonalError {
+    constructor(message) {
+        super(message);
+        this.status = 400;
+        this.message = message
+    }
+}
+class WrongParamsError extends PersonalError {
     constructor(message) {
         super(message);
         this.status = 400;
         this.message = message;
     }
 }
-class NotFoundError extends Error {
+class NotFoundError extends PersonalError {
     constructor(message) {
         super(message);
         this.status = 404;
@@ -20,7 +27,7 @@ class NotFoundError extends Error {
 
     }
 }
-class ConflictError extends Error {
+class ConflictError extends PersonalError {
     constructor(message) {
         super(message);
         this.status = 409;
@@ -28,7 +35,7 @@ class ConflictError extends Error {
 
     }
 }
-class Unauthorized extends Error {
+class Unauthorized extends PersonalError {
     constructor(message) {
         super(message);
         this.status = 401;
@@ -38,6 +45,7 @@ class Unauthorized extends Error {
 }
 
 module.exports = {
+    PersonalError,
     ValidationError,
     WrongParamsError,
     NotFoundError,
