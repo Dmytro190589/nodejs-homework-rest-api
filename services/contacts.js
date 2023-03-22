@@ -1,8 +1,16 @@
 const { WrongParamsError, NotFoundError } = require('../helpers/error');
 const { Contact } = require('../models')
 
-const getAllContacts = async (owner) => {
-    return Contact.find({ owner })
+const getAllContacts = async (owner, query) => {
+    const { page = 1, limit = 20, favorite } = query;
+    const skip = (page - 1) * limit;
+
+    if (!favorite) {
+        return await Contact.find({ owner }, "", { skip, limit: Number(limit) })
+            .populate("owner", "_id email subscription")
+    }
+    return await Contact.find({ owner, favorite }, "", { skip, limit: Number(limit) })
+        .populate("owner", "_id email subscription")
 }
 
 const getContactById = async (id) => {
@@ -13,7 +21,7 @@ const getContactById = async (id) => {
     }
     return result
 }
-const addContact = async ({ name, email, phone }, owner) => {
+const addContact = async ({ name, email, phone, owner }) => {
     return Contact.create({ name, email, phone, owner })
 
 }

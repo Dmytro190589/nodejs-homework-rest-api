@@ -19,16 +19,34 @@ const login = async (email, password) => {
     if (!user || !await bcrypt.compare(password, user.password)) {
         throw new Unauthorized("Email or Password is wrong")
     }
+
     const token = jwt.sign({
         id: user.id,
     }, process.env.JWT_SECRET)
+    await User.findByIdAndUpdate(user.id, { token })
+    return { token, user };
 
-    return token;
+}
+const current = async (token) => {
+    return await User.findOne({ token })
+}
 
+const subscription = async (id, body) => {
+    const user = await User.findByIdAndUpdate({ _id: id }, body, { new: ['starter', 'pro', 'business'] })
+    if (!user) {
+        throw new Unauthorized(`Not found user by ${id}`)
+    }
+    return user;
+}
+
+const logout = async (id, token) => {
+    return await User.findByIdAndUpdate(id, token)
 }
 
 module.exports = {
     registration,
     login,
-
+    current,
+    subscription,
+    logout
 }

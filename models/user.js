@@ -1,4 +1,4 @@
-const { Schema, model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt')
 
 const userSchema = Schema({
@@ -16,8 +16,11 @@ const userSchema = Schema({
         enum: ["starter", "pro", "business"],
         default: "starter"
     },
-    token: String,
-  
+    token: {
+        type: String,
+        default: null
+    }
+
 });
 userSchema.pre('save', async function () {
     if (this.isNew) {

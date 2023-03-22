@@ -1,21 +1,31 @@
 const jwt = require('jsonwebtoken')
 
+const { User } = require('../models')
 const { Unauthorized } = require('../helpers/error');
 
 
-const authMiddleware = (req, res, next) => {
-    const [tokenType, token] = req.headers.authorization.split(' ');
-
-    if (!token) {
-        next(new Unauthorized("Not authorized"))
-    }
+const authMiddleware = async (req, res, next) => {
+    const { authorization = '' } = req.headers;
+    const [bearer, token] = authorization.split(' ');
     try {
-        const user = jwt.decode(token, process.env.JWT_SECRET)
-        req.token = token;
+
+        if (bearer !== "Bearer" || !token) {
+            next(new Unauthorized("Not authorized"))
+        }
+        const { id } = jwt.decode(token, process.env.JWT_SECRET)
+
+        const user = await User.findById(id)
+
+        if (!user || !user.token) {
+            next(new Unauthorized("Not authorized"))
+
+        }
         req.user = user;
         next();
+
     } catch (error) {
-        next(new Unauthorized('Invalid token'))
+
+        next(new Unauthorized("Invalid token"))
     }
 }
 

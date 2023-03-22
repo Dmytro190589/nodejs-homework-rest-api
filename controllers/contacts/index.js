@@ -1,9 +1,10 @@
 const services = require('../../services/contacts')
 
 const getContact = async (req, res) => {
-    const { id } = req.user
+    const { _id } = req.user
 
-    const result = await services.getAllContacts(id);
+    const result = await services.getAllContacts(_id, req.query);
+
     return res.json({
         status: 'success',
         code: '200',
@@ -25,9 +26,8 @@ const getContactById = async (req, res) => {
     })
 }
 const addContact = async (req, res) => {
-    const { name, email, phone } = req.body
-    const { id } = req.user
-    const result = await services.addContact({ name, email, phone }, id)
+    const { _id } = req.user
+    const result = await services.addContact({ ...req.body, owner: _id })
     return res.status(201).json({
         status: 'success',
         code: '201',
@@ -38,13 +38,15 @@ const addContact = async (req, res) => {
 }
 const deleteContact = async (req, res) => {
     const { contactId } = req.params
-    await services.deleteContact(contactId)
+    const { id } = req.user
+    await services.deleteContact(contactId, id)
     return res.json({ message: "contact deleted" })
 }
 const updateContact = async (req, res) => {
     const { contactId } = req.params;
+    const { _id } = req.user
     const { name, email, phone } = req.body
-    const contact = await services.updateContact(contactId, { name, email, phone })
+    const contact = await services.updateContact(contactId, { name, email, phone, owner: _id })
     res.json({
         status: 'success',
         message: "Contact updated",
@@ -55,8 +57,9 @@ const updateContact = async (req, res) => {
 }
 const updateStatusContact = async (req, res) => {
     const { contactId } = req.params;
+    const { _id } = req.user
     const { favorite } = req.body
-    const result = await services.updateContact(contactId, { favorite })
+    const result = await services.updateContact(contactId, { favorite, owner: _id })
     return res.json({
         status: "success",
         code: 200,
