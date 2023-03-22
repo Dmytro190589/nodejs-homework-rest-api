@@ -32,7 +32,7 @@ const current = async (token) => {
 }
 
 const subscription = async (id, body) => {
-    const user = await User.findByIdAndUpdate({ _id: id }, body, { new: ['starter', 'pro', 'business'] })
+    const user = await User.findByIdAndUpdate( id , body, { new: ['starter', 'pro', 'business'] })
     if (!user) {
         throw new Unauthorized(`Not found user by ${id}`)
     }

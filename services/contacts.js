@@ -33,7 +33,7 @@ const deleteContact = async (id) => {
     return result;
 }
 const updateContact = async (id, body) => {
-    const contact = await Contact.findByIdAndUpdate({ _id: id }, body, { new: true })
+    const contact = await Contact.findByIdAndUpdate( id , body, { new: true })
     if (!contact) {
         throw new NotFoundError(`Not found contact id: ${id}`)
     }
