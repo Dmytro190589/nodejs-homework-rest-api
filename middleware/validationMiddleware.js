@@ -5,14 +5,13 @@ module.exports = {
     addPostValidation: (req, res, next) => {
         const schema = Joi.object({
             name: Joi.string()
-                .alphanum()
                 .min(3)
                 .max(20)
                 .required(),
             email: Joi.string()
                 .email({ maxDomainSegments: 2, tlds: { deny: ['ru'] } })
                 .required(),
-            phone: Joi.number()
+            phone: Joi.string()
                 .min(7)
                 .required(),
         })
