@@ -44,8 +44,6 @@ const subscription = async (req, res) => {
         user: {
             result
         }
-
-
     })
 }
 

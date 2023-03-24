@@ -33,8 +33,7 @@ const current = async (token) => {
 
 const subscription = async (id, subscription) => {
 
-    // const subList = ["starter", "pro", "business"]
-    const user = await User.findByIdAndUpdate(id, { $set: subscription }, { new: true, select: " id email subscription" })
+    const user = await User.findByIdAndUpdate(id, subscription, { new: true, select: " id email subscription" })
     if (!user) {
         throw new Unauthorized(`Not found user by ${id}`)
     }

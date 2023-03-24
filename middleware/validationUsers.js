@@ -21,5 +21,16 @@ module.exports = {
         }
         next();
     },
+    addSubscriptionValidation: (req, res, next) => {
+        const schema = Joi.object({
+            subscription: Joi.string()
+                .valid("starter", "pro", "business"),
+        })
 
+        const validationResult = schema.validate(req.body);
+        if (validationResult.error) {
+            next(new ValidationError(validationResult.error.details))
+        }
+        next();
+    },
 }
