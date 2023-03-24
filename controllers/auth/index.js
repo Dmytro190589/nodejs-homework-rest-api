@@ -15,12 +15,11 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const { token, user } = await services.login(email, password)
+    const token = await services.login(email, password)
     res.json({
         result: {
             token,
             email,
-            subscription: user.subscription
         }
 
     })
@@ -39,18 +38,14 @@ const current = async (req, res) => {
 
 const subscription = async (req, res) => {
     const { _id } = req.user;
-    const { subscription = "starter" } = req.body;
-    const result = await services.subscription(_id, { subscription })
+    const { subscription } = req.body;
+    const result = await services.subscription(_id, subscription)
     return res.json({
-        status: "success",
-        code: 200,
         user: {
-            result: {
-                id: result._id,
-                email: result.email,
-                subscription: result.subscription
-            }
+            result
         }
+
+
     })
 }
 

@@ -14,7 +14,7 @@ router.post('/login', addUserValidation, ctrlWrapper(ctrl.login))
 
 router.post('/current', authMiddleware, ctrlWrapper(ctrl.current))
 
-router.patch('/', authMiddleware, ctrlWrapper(ctrl.subscription))
+router.patch('/', authMiddleware, addUserValidation, ctrlWrapper(ctrl.subscription))
 
 router.get('/logout', authMiddleware, ctrlWrapper(ctrl.logout))
 

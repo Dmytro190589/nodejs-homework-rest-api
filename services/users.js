@@ -24,15 +24,17 @@ const login = async (email, password) => {
         id: user.id,
     }, process.env.JWT_SECRET)
     await User.findByIdAndUpdate(user.id, { token })
-    return { token, user };
+    return token;
 
 }
 const current = async (token) => {
     return await User.findOne({ token })
 }
 
-const subscription = async (id, body) => {
-    const user = await User.findByIdAndUpdate( id , body, { new: ['starter', 'pro', 'business'] })
+const subscription = async (id, subscription) => {
+
+    // const subList = ["starter", "pro", "business"]
+    const user = await User.findByIdAndUpdate(id, { $set: subscription }, { new: true, select: " id email subscription" })
     if (!user) {
         throw new Unauthorized(`Not found user by ${id}`)
     }
