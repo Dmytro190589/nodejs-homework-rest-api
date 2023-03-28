@@ -8,7 +8,9 @@ const ctrlWrapper = (ctrl) => {
             next(error)
         }
     }
+
 }
+
 const errorHandler = (error, req, res, next) => {
     if (error instanceof PersonalError) {
         return res.status(error.status).json({ message: error.message })
