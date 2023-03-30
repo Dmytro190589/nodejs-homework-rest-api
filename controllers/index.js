@@ -4,5 +4,5 @@ const fileController = require('./files')
 module.exports = {
     contacts,
     auth,
-    fileController
+    fileController,
 }

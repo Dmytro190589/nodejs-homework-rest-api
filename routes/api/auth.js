@@ -4,6 +4,7 @@ const { ctrlWrapper } = require('../../helpers')
 const { auth: ctrl } = require('../../controllers')
 const { addUserValidation, addSubscriptionValidation } = require('../../middleware/validationUsers')
 const { authMiddleware } = require('../../middleware/authMiddleware')
+const { upload } = require('../../middleware/uploadMiddleware')
 
 const router = express.Router()
 
@@ -17,6 +18,8 @@ router.post('/current', authMiddleware, ctrlWrapper(ctrl.current))
 router.patch('/', authMiddleware, addSubscriptionValidation, ctrlWrapper(ctrl.subscription))
 
 router.get('/logout', authMiddleware, ctrlWrapper(ctrl.logout))
+
+router.patch('/avatars', authMiddleware, upload.single('avatar'), ctrlWrapper(ctrl.updateAvatar))
 
 
 module.exports = router
