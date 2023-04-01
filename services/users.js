@@ -1,9 +1,14 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const gravatar = require('gravatar')
+const Jimp = require("jimp");
+
 
 
 const { ConflictError, Unauthorized } = require('../helpers/error');
 const { User } = require('../models')
+const path = require('path');
+const fs = require("fs/promises")
 
 
 const registration = async (email, password) => {
@@ -11,7 +16,8 @@ const registration = async (email, password) => {
     if (user) {
         throw new ConflictError(`${email} in use`)
     }
-    return User.create({ email, password })
+    const avatarURL = gravatar.url(email)
+    return User.create({ email, password, avatarURL })
 }
 
 const login = async (email, password) => {
@@ -44,10 +50,28 @@ const logout = async (id, token) => {
     return await User.findByIdAndUpdate(id, token)
 }
 
+const avatarDir = path.join(__dirname, "../", "public", "avatars")
+const updateAvatar = async (id, originalname, tempUpload) => {
+    const imageName = `${id}_${originalname}`
+    try {
+        const resultUpload = path.join(avatarDir, imageName)
+        const newAvatar = await Jimp.read(tempUpload);
+        newAvatar.resize(250, 250).write(tempUpload)
+
+        await fs.rename(tempUpload, resultUpload)
+        const avatarURL = path.join("public", "avatars", imageName)
+        await User.findByIdAndUpdate(id, { avatarURL })
+        return avatarURL
+    } catch (error) {
+        await fs.unlink(tempUpload);
+        throw error;
+    }
+}
 module.exports = {
     registration,
     login,
     current,
     subscription,
-    logout
+    logout,
+    updateAvatar,
 }

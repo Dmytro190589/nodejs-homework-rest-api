@@ -1,12 +1,15 @@
 const services = require('../../services/users')
 
+
+
 const register = async (req, res) => {
     const { email, password } = req.body;
     const result = await services.registration(email, password)
     res.status(201).json({
         user: {
             email: result.email,
-            subscription: result.subscription
+            subscription: result.subscription,
+            avatarURL: result.avatarURL
         }
     })
 }
@@ -53,10 +56,19 @@ const logout = async (req, res) => {
     await services.logout(id, { token: null })
     res.status(204).json()
 }
+
+
+const updateAvatar = async (req, res) => {
+    const { path: tempUpload, originalname } = req.file;
+    const { _id: id } = req.user
+    const avatarUrl = await services.updateAvatar(id, originalname, tempUpload)
+    res.json({ avatarUrl })
+}
 module.exports = {
     register,
     login,
     current,
     subscription,
-    logout
+    logout,
+    updateAvatar
 }
