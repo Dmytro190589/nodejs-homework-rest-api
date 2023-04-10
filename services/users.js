@@ -70,15 +70,21 @@ const updateAvatar = async (id, originalname, tempUpload) => {
     }
 }
 
-const verifyEmail = async (id, verificationToken) => {
+const verifyEmail = async (verificationToken) => {
     const user = await User.findOne({ verificationToken })
     if (!user) {
         throw NotFoundError('User not found')
     }
+    const id = user._id
     return await User.findByIdAndUpdate(id, { verify: true, verificationToken: null })
-
 }
-
+const repeatEmail = async (email) => {
+    const user = User.findOne({ email })
+    if(!user){
+        throw NotFoundError("User not found")
+    }
+    return user
+}
 module.exports = {
     registration,
     login,
@@ -86,5 +92,6 @@ module.exports = {
     subscription,
     logout,
     updateAvatar,
-    verifyEmail
+    verifyEmail,
+    repeatEmail
 }

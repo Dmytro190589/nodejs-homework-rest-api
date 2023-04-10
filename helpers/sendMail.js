@@ -1,9 +1,8 @@
 const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 
 const sendEmail = async (email, verificationToken) => {
-
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
         to: email,
         from: process.env.SENDGRID_EMAIL,
@@ -18,5 +17,5 @@ const sendEmail = async (email, verificationToken) => {
         throw new Error(error.message)
     }
 }
-module.exports = sendEmail;
+module.exports = { sendEmail };
 

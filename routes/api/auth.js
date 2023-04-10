@@ -2,7 +2,7 @@ const express = require('express');
 
 const { ctrlWrapper } = require('../../helpers')
 const { auth: ctrl } = require('../../controllers')
-const { addUserValidation, addSubscriptionValidation } = require('../../middleware/validationUsers')
+const { addUserValidation, addSubscriptionValidation, validationEmail } = require('../../middleware/validationUsers')
 const { authMiddleware } = require('../../middleware/authMiddleware')
 const { upload } = require('../../middleware/uploadMiddleware')
 
@@ -21,7 +21,9 @@ router.get('/logout', authMiddleware, ctrlWrapper(ctrl.logout))
 
 router.patch('/avatars', authMiddleware, upload.single('avatar'), ctrlWrapper(ctrl.updateAvatar))
 
-router.get('/verify/:verificationToken',ctrlWrapper(ctrl.verifyEmail))
+router.get('/verify/:verificationToken', ctrlWrapper(ctrl.verifyEmail))
+
+router.post('/verify', validationEmail, ctrlWrapper(ctrl.repeatEmail))
 
 
 module.exports = router

@@ -1,19 +1,19 @@
 const services = require('../../services/users')
-const { sendMail } = require('../../helpers/sendMail')
+const { sendEmail } = require('../../helpers/sendMail')
 
 
 
 const register = async (req, res) => {
     const { email, password } = req.body;
-    const { verificationToken } = req.params;
     const result = await services.registration(email, password)
-    await sendMail(email, verificationToken)
+    const verificationToken = result.verificationToken;
+    await sendEmail(email, verificationToken)
     res.status(201).json({
         user: {
             email: result.email,
             subscription: result.subscription,
             avatarURL: result.avatarURL,
-            verificationToken: result.verificationToken
+            verificationToken: verificationToken
         }
     })
 }
@@ -71,10 +71,20 @@ const updateAvatar = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
     const { verificationToken } = req.params;
-    const { id } = req.user
-    await services.verifyEmail(id, verificationToken)
+    await services.verifyEmail(verificationToken)
     res.json({ message: 'Verification successful' })
 }
+const repeatEmail = async (req, res) => {
+    const { email } = req.body
+    const user = await services.repeatEmail(email)
+    if (user.verify) {
+        return res.status(400).json({ message: "Verification has already been passed" })
+    }
+    sendEmail(email, user.verificationToken)
+    res.json({ message: "Verification email sent" })
+}
+
+
 module.exports = {
     register,
     login,
@@ -82,5 +92,6 @@ module.exports = {
     subscription,
     logout,
     updateAvatar,
-    verifyEmail
+    verifyEmail,
+    repeatEmail
 }

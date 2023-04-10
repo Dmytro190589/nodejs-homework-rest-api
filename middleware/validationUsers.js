@@ -33,4 +33,17 @@ module.exports = {
         }
         next();
     },
+    validationEmail: (req, res, next) => {
+        const schema = Joi.object({
+            email: Joi.string()
+                .email({ maxDomainSegments: 2, tlds: { deny: ['ru'] } })
+                .required(),
+        })
+
+        const validationResult = schema.validate(req.body);
+        if (validationResult.error) {
+            next(new ValidationError(validationResult.error.details))
+        }
+        next();
+    }
 }
