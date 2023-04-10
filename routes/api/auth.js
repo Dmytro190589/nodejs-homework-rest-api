@@ -21,5 +21,7 @@ router.get('/logout', authMiddleware, ctrlWrapper(ctrl.logout))
 
 router.patch('/avatars', authMiddleware, upload.single('avatar'), ctrlWrapper(ctrl.updateAvatar))
 
+router.get('/verify/:verificationToken',ctrlWrapper(ctrl.verifyEmail))
+
 
 module.exports = router

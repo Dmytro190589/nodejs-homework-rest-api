@@ -1,15 +1,19 @@
 const services = require('../../services/users')
+const { sendMail } = require('../../helpers/sendMail')
 
 
 
 const register = async (req, res) => {
     const { email, password } = req.body;
+    const { verificationToken } = req.params;
     const result = await services.registration(email, password)
+    await sendMail(email, verificationToken)
     res.status(201).json({
         user: {
             email: result.email,
             subscription: result.subscription,
-            avatarURL: result.avatarURL
+            avatarURL: result.avatarURL,
+            verificationToken: result.verificationToken
         }
     })
 }
@@ -64,11 +68,19 @@ const updateAvatar = async (req, res) => {
     const avatarUrl = await services.updateAvatar(id, originalname, tempUpload)
     res.json({ avatarUrl })
 }
+
+const verifyEmail = async (req, res) => {
+    const { verificationToken } = req.params;
+    const { id } = req.user
+    await services.verifyEmail(id, verificationToken)
+    res.json({ message: 'Verification successful' })
+}
 module.exports = {
     register,
     login,
     current,
     subscription,
     logout,
-    updateAvatar
+    updateAvatar,
+    verifyEmail
 }

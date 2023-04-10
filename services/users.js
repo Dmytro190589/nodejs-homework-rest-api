@@ -5,7 +5,8 @@ const Jimp = require("jimp");
 
 
 
-const { ConflictError, Unauthorized } = require('../helpers/error');
+const { ConflictError, Unauthorized, NotFoundError } = require('../helpers/error');
+const { v4 } = require('uuid')
 const { User } = require('../models')
 const path = require('path');
 const fs = require("fs/promises")
@@ -17,12 +18,13 @@ const registration = async (email, password) => {
         throw new ConflictError(`${email} in use`)
     }
     const avatarURL = gravatar.url(email)
-    return User.create({ email, password, avatarURL })
+    const verificationToken = v4();
+    return User.create({ email, password, avatarURL, verificationToken })
 }
 
 const login = async (email, password) => {
     const user = await User.findOne({ email })
-    if (!user || !await bcrypt.compare(password, user.password)) {
+    if (!user || !user.verify || !await bcrypt.compare(password, user.password)) {
         throw new Unauthorized("Email or Password is wrong")
     }
 
@@ -67,6 +69,16 @@ const updateAvatar = async (id, originalname, tempUpload) => {
         throw error;
     }
 }
+
+const verifyEmail = async (id, verificationToken) => {
+    const user = await User.findOne({ verificationToken })
+    if (!user) {
+        throw NotFoundError('User not found')
+    }
+    return await User.findByIdAndUpdate(id, { verify: true, verificationToken: null })
+
+}
+
 module.exports = {
     registration,
     login,
@@ -74,4 +86,5 @@ module.exports = {
     subscription,
     logout,
     updateAvatar,
+    verifyEmail
 }
